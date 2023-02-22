@@ -332,7 +332,7 @@ runs:
     - name: Create or update Azure Container App
       shell: bash
       run: |
-        if: [ "${{ inputs.customContainerAppEnvironment }}" == "true" ]
+        if [ "${{ inputs.customContainerAppEnvironment }}" == "true" ]
         then
           INFRASTRUCTURE_SUBNET=$(az network vnet subnet show --resource-group ${{ inputs.resourceGroup }} --vnet-name ${{ inputs.vnetName }} --name ${{ inputs.subnetName }} --query "id" -o tsv | tr -d '[:space:]')
           az containerapp env create --name ${{ inputs.containerAppName }} --resource-group ${{ inputs.resourceGroup }} --location ${{ inputs.location }} --infrastructure-subnet-resource-id $INFRASTRUCTURE_SUBNET --internal-only
