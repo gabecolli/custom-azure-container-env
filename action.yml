@@ -334,7 +334,7 @@ runs:
       shell: bash
       run: |
         if: ${{inputs.customContainerAppEnvironment == 'true'}}; then
-          az containerapp env create --name ${{ env.CA_GH_ACTION_CONTAINER_APP_ENVIRONMENT_VARIABLES_ARG }} --resource-group ${{ env.CA_GH_ACTION_RESOURCE_GROUP }} --infrastructure-subnet-resource-id ${{ inputs.infrastructureResourceSubnetId }} --internal-only true --location ${{ inputs.location }}
+          az containerapp env create --name ${{ env.CA_GH_ACTION_CONTAINER_APP_ENVIRONMENT_VARIABLES_ARG }} --resource-group ${{ env.CA_GH_ACTION_RESOURCE_GROUP }} --infrastructure-subnet-resource-id /subscriptions/284bc6ed-4e92-4149-aa3d-15d98ce038bf/resourceGroups/container-testing/providers/Microsoft.Network/virtualNetworks/isolated-container/subnets/containerenv --internal-only true --location ${{ inputs.location }}
         else  
           az containerapp up --name ${{ inputs.containerAppName }} --resource-group ${{ env.CA_GH_ACTION_RESOURCE_GROUP }} --image ${{ env.CA_GH_ACTION_IMAGE_TO_DEPLOY }} ${{ env.CA_GH_ACTION_TARGET_PORT_ARG }} ${{ env.CA_GH_ACTION_CONTAINER_APP_ENVIRONMENT_ARG }} ${{ env.CA_GH_ACTION_ACR_LOGIN_ARG }} ${{ env.CA_GH_ACTION_CONTAINER_APP_LOCATION_ARG }} ${{ env.CA_GH_ACTION_CONTAINER_APP_ENVIRONMENT_VARIABLES_ARG }}
     - name: Mark action as 'succeeded' for telemetry
