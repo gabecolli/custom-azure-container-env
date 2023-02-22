@@ -68,10 +68,6 @@ inputs:
     description: |
       'Whether or not you'd like to use a custom environment for the Container App. If not provided'
     required: false
-  infrastructureResourceSubnetId:
-    description: |
-      'The Subnet ID of the Azure Container App environment to use with the application.'
-    required: false
   runtimeStack:
     description: |
       'The platform version stack that the application runs in when deployed to the Azure Container App. This should
@@ -85,10 +81,14 @@ inputs:
       'The designated port for the application to run on. If not provided, this value is 80 for Python and 8080 for all
       other supported platforms.'
     required: false
-  vnet_Name:
+  vnetName:
     description: | 
       'name for the vnet if choosing to isolate your instance' 
-    required: false 
+    required: false
+  subnetName:
+    description: |
+      'subnet name'
+    required: false
   location:
     description: |
       'The location that the Container App (and other created resources) will be deployed to. To view locations suitable
@@ -338,8 +338,8 @@ runs:
       shell: bash
       run: |
         if: [[ ${{inputs.customContainerAppEnvironment == 'true'}} ]]; then
-          INFRASTRUCTURE_SUBNET = az network vnet subnet show --resource-group ${RESOURCE_GROUP} --vnet-name $VNET_NAME --name infrastructure-subnet --query "id" -o tsv | tr -d '[:space:]'
-          az containerapp env create --name ${{ inputs.containerAppName }} --resource-group ${{ inputs.resourceGroup }} --location "$LOCATION" --infrastructure-subnet-resource-id $INFRASTRUCTURE_SUBNET --internal-only
+          INFRASTRUCTURE_SUBNET = az network vnet subnet show --resource-group ${{ inputs.resourceGroup }} --vnet-name ${{ inputs.vnetName }} --name ${{ inputs.subnetName }} --query "id" -o tsv | tr -d '[:space:]'
+          az containerapp env create --name ${{ inputs.containerAppName }} --resource-group ${{ inputs.resourceGroup }} --location ${{ inputs.location }} --infrastructure-subnet-resource-id $INFRASTRUCTURE_SUBNET --internal-only
           az containerapp up --name ${{ inputs.containerAppName }} --resource-group ${{ env.CA_GH_ACTION_RESOURCE_GROUP }} --image ${{ env.CA_GH_ACTION_IMAGE_TO_DEPLOY }} ${{ env.CA_GH_ACTION_TARGET_PORT_ARG }} ${{ env.CA_GH_ACTION_CONTAINER_APP_ENVIRONMENT_ARG }} ${{ env.CA_GH_ACTION_ACR_LOGIN_ARG }} ${{ env.CA_GH_ACTION_CONTAINER_APP_LOCATION_ARG }} ${{ env.CA_GH_ACTION_CONTAINER_APP_ENVIRONMENT_VARIABLES_ARG }}
         else  
           az containerapp up --name ${{ inputs.containerAppName }} --resource-group ${{ env.CA_GH_ACTION_RESOURCE_GROUP }} --image ${{ env.CA_GH_ACTION_IMAGE_TO_DEPLOY }} ${{ env.CA_GH_ACTION_TARGET_PORT_ARG }} ${{ env.CA_GH_ACTION_CONTAINER_APP_ENVIRONMENT_ARG }} ${{ env.CA_GH_ACTION_ACR_LOGIN_ARG }} ${{ env.CA_GH_ACTION_CONTAINER_APP_LOCATION_ARG }} ${{ env.CA_GH_ACTION_CONTAINER_APP_ENVIRONMENT_VARIABLES_ARG }}
